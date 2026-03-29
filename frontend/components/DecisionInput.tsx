@@ -31,6 +31,14 @@ export default function DecisionInput({
 }: DecisionInputProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 250)}px`;
+    }
+  }, [prompt]);
 
   const selectedLabel = useMemo(() => {
     return selectedAgent === "all"
@@ -79,35 +87,13 @@ export default function DecisionInput({
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="mx-auto w-full max-w-[1100px]"
     >
-      <div className="mb-8 text-center">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#1B6AC9]/15 bg-[#1B6AC9]/5 px-4 py-1.5 text-sm text-[#1B6AC9]"
-        >
-          <Sparkles className="h-4 w-4 text-[#1B6AC9]" />
-          Council + Direct Specialist Routing
-        </motion.div>
-
-        <h1 className="mb-3 text-4xl font-bold tracking-tight text-[#1a1a2e] md:text-5xl">
-          Enter The Council Chamber
-        </h1>
-        <p className="mx-auto max-w-3xl text-lg text-[#4a4e69]">
-          Ask the full Synod council or route your prompt straight to one specialist.
-          The selector below works like ChatGPT&apos;s model switch, but for agents.
-        </p>
-        <p className="mx-auto mt-2 max-w-3xl text-sm text-[#8b8fa3]">
-          You can also open any agent card below and keep talking to that specialist in the same thread.
-        </p>
-      </div>
-
       <form onSubmit={handleSubmit} className="relative">
         <div className="group relative">
           <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-[#1B6AC9]/15 via-[#1B6AC9]/25 to-[#1558a8]/15 blur-lg opacity-0 transition-opacity duration-500 group-focus-within:opacity-80" />
 
           <div className="relative rounded-2xl border border-[#d4d9e0] bg-white p-1.5 shadow-sm">
             <textarea
+              ref={textareaRef}
               id="decision-input"
               value={prompt}
               onChange={(e) => onPromptChange(e.target.value)}
@@ -122,9 +108,10 @@ export default function DecisionInput({
                   ? "Ask the full Synod council..."
                   : `Ask the ${selectedLabel} directly...`
               }
-              rows={4}
+              rows={1}
               disabled={isLoading}
-              className="w-full resize-none bg-transparent px-5 py-4 text-lg text-[#1a1a2e] placeholder-[#8b8fa3] focus:outline-none disabled:opacity-50"
+              className="w-full resize-none bg-transparent px-5 py-4 text-lg text-[#1a1a2e] placeholder-[#8b8fa3] focus:outline-none disabled:opacity-50 overflow-y-auto"
+              style={{ minHeight: "3.5rem" }}
             />
 
             <div className="relative flex flex-col gap-3 px-3 pb-3 md:flex-row md:items-center md:justify-between">

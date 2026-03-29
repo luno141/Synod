@@ -4,10 +4,12 @@ import { useCallback, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import AgentCard from "@/components/AgentCard";
+import ChatBubble from "@/components/ChatBubble";
 import DecisionInput from "@/components/DecisionInput";
 import FeedbackButtons from "@/components/FeedbackButtons";
 import FinalVerdict from "@/components/FinalVerdict";
 import HistorySidebar, { type SidebarThread } from "@/components/HistorySidebar";
+import LandingPage from "@/components/LandingPage";
 import ThinkingAnimation from "@/components/ThinkingAnimation";
 import { streamAnalyzePrompt } from "@/lib/api";
 import {
@@ -153,6 +155,7 @@ export default function Home() {
   const activeDecision = decision ?? activeTurn?.decision ?? null;
   const displayedDecision = isLoading ? null : activeDecision;
   const loadingShowsCouncil = selectedAgent === "all";
+  const isInitialState = !isLoading && !displayedDecision && threadTurns.length === 0 && !error;
 
   const visiblePanels = isLoading
     ? loadingShowsCouncil
@@ -294,37 +297,33 @@ export default function Home() {
 
   return (
     <div className="flex h-screen">
-      <HistorySidebar
-        threads={sidebarThreads}
-        activeThreadId={activeTurnId}
-        onSelectThread={handleSelectSidebarThread}
-        onNewChat={handleNewChat}
-      />
+      {!isInitialState && (
+        <HistorySidebar
+          threads={sidebarThreads}
+          activeThreadId={activeTurnId}
+          onSelectThread={handleSelectSidebarThread}
+          onNewChat={handleNewChat}
+        />
+      )}
 
-      <main className="ml-[260px] flex-1 overflow-y-auto min-h-screen">
-        <div className="flex min-h-full flex-col items-center justify-start px-4 py-10 md:px-6 md:py-14">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <h1 className="text-2xl font-bold tracking-tight">
-              <span className="bg-gradient-to-r from-[#1B6AC9] to-[#1558a8] bg-clip-text text-transparent">
-                Synod
-              </span>
-            </h1>
-          </motion.div>
-
-          <div className="w-full">
-            <DecisionInput
-              prompt={prompt}
-              onPromptChange={setPrompt}
-              onSubmit={handleAnalyze}
-              isLoading={isLoading}
-              selectedAgent={selectedAgent}
-              onTargetChange={setSelectedAgent}
-            />
-          </div>
+      <main className={`relative flex min-h-screen flex-col bg-white flex-1 overflow-hidden transition-all duration-300 ${isInitialState ? 'ml-0' : 'md:ml-[260px]'}`}>
+        {isInitialState ? (
+          <LandingPage
+            inputElement={
+              <DecisionInput
+                prompt={prompt}
+                onPromptChange={setPrompt}
+                onSubmit={handleAnalyze}
+                isLoading={isLoading}
+                selectedAgent={selectedAgent}
+                onTargetChange={setSelectedAgent}
+              />
+            }
+          />
+        ) : (
+          <>
+            <div className="flex-1 overflow-y-auto px-4 pb-40 pt-10 md:px-12 md:pt-14 scroll-smooth">
+              <div className="mx-auto flex w-full max-w-[1400px] flex-col items-center justify-start">
 
           {(isLoading || displayedDecision || error) && activePrompt ? (
             <motion.div
@@ -453,34 +452,44 @@ export default function Home() {
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-[#8b8fa3]">
-                    Agent Panels
+                    {activeDecision?.mode === "specialist" ? "Direct Reply" : "Agent Panels"}
                   </p>
                   <h3 className="mt-1 text-lg font-semibold text-[#1a1a2e]">
-                    Compact cards, hover only enlarges the card you touch
+                    {activeDecision?.mode === "specialist" ? "A focused response to your query" : "Compact cards, hover only enlarges the card you touch"}
                   </h3>
                 </div>
-                <p className="text-sm text-[#8b8fa3]">
-                  Tap any card to pin it open and ask that agent a follow-up directly.
-                </p>
+                {activeDecision?.mode !== "specialist" && (
+                  <p className="text-sm text-[#8b8fa3]">
+                    Tap any card to pin it open and ask that agent a follow-up directly.
+                  </p>
+                )}
               </div>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {visiblePanels.map((panel, index) => (
-                  <AgentCard
-                    key={panel.key}
-                    output={panel}
-                    meta={AGENT_CONFIG_BY_KEY[panel.key]}
-                    index={index}
-                    isExpanded={selectedPanelKey === panel.key}
-                    onToggle={() =>
-                      setSelectedPanelKey((current) =>
-                        current === panel.key ? null : panel.key,
-                      )
-                    }
-                    onAskAgent={handleAgentPrompt}
-                  />
-                ))}
-              </div>
+              {activeDecision?.mode === "specialist" ? (
+                <div className="flex flex-col w-full">
+                  {visiblePanels.map((panel) => (
+                    <ChatBubble key={panel.key} panel={panel} />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                  {visiblePanels.map((panel, index) => (
+                    <AgentCard
+                      key={panel.key}
+                      output={panel}
+                      meta={AGENT_CONFIG_BY_KEY[panel.key]}
+                      index={index}
+                      isExpanded={selectedPanelKey === panel.key}
+                      onToggle={() =>
+                        setSelectedPanelKey((current) =>
+                          current === panel.key ? null : panel.key,
+                        )
+                      }
+                      onAskAgent={handleAgentPrompt}
+                    />
+                  ))}
+                </div>
+              )}
 
               {activeDecision?.mode === "council" && !showSynthesisPanel ? (
                 <div className="flex justify-center pt-2">
@@ -540,15 +549,6 @@ export default function Home() {
                   )
                 ) : (
                   <>
-                    <div className="flex items-center gap-4 py-4">
-                      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#d4d9e0] to-transparent" />
-                      <span className="text-xs uppercase tracking-wider text-[#8b8fa3]">
-                        Final Verdict
-                      </span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#d4d9e0] to-transparent" />
-                    </div>
-
-                    <FinalVerdict decision={displayedDecision} />
                     <FeedbackButtons decisionId={displayedDecision.id} />
                   </>
                 )}
@@ -564,14 +564,33 @@ export default function Home() {
                     onClick={handleNewAnalysis}
                     className="rounded-xl border border-[#d4d9e0] bg-white px-6 py-3 text-sm text-[#4a4e69] transition-all duration-200 hover:bg-[#e8ecf1] hover:text-[#1a1a2e] shadow-sm"
                   >
-                    Clear Input
+                    Clear Chat
                   </button>
                 </motion.div>
               </motion.div>
             ) : null}
           </AnimatePresence>
         </div>
-      </main>
-    </div>
-  );
+      </div>
+
+      <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-white via-white/95 to-transparent pb-6 pt-10 px-4 md:px-6 z-10">
+        <div className="mx-auto w-full max-w-4xl">
+          <DecisionInput
+            prompt={prompt}
+            onPromptChange={setPrompt}
+            onSubmit={handleAnalyze}
+            isLoading={isLoading}
+            selectedAgent={selectedAgent}
+            onTargetChange={setSelectedAgent}
+          />
+          <p className="mt-3 text-center text-[10px] text-[#8b8fa3]">
+            Synod is a multi-agent system and can make mistakes. Consider verifying critical insights.
+          </p>
+        </div>
+      </div>
+    </>
+  )}
+</main>
+</div>
+);
 }

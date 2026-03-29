@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, ChevronUp, Send } from "lucide-react";
 
@@ -28,6 +28,14 @@ export default function AgentCard({
   onAskAgent,
 }: AgentCardProps) {
   const [followUp, setFollowUp] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+    }
+  }, [followUp]);
 
   const handleAsk = async () => {
     const prompt = followUp.trim();
@@ -108,43 +116,45 @@ export default function AgentCard({
         </div>
 
         <div className={`grid gap-3 ${isExpanded ? "flex-1" : ""}`}>
-          <section className="rounded-xl border border-[#e8ecf1] bg-[#f7f8fa] px-3 py-2">
-            <h4 className="mb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#8b8fa3]">
-              Mission
-            </h4>
-            <p
-              style={isExpanded ? undefined : { maxHeight: "3.25rem", overflow: "hidden" }}
-              className="text-sm leading-relaxed text-[#4a4e69]"
-            >
-              {output.mission}
-            </p>
-          </section>
+          {!isExpanded && (
+            <>
+              <section className="rounded-xl border border-[#e8ecf1] bg-[#f7f8fa] px-3 py-2">
+                <h4 className="mb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#8b8fa3]">
+                  Mission
+                </h4>
+                <p
+                  className="text-sm leading-relaxed text-[#4a4e69]"
+                  style={{ maxHeight: "3.25rem", overflow: "hidden" }}
+                >
+                  {output.mission}
+                </p>
+              </section>
 
-          <section className="rounded-xl border border-[#e8ecf1] bg-[#f7f8fa] px-3 py-2">
-            <h4 className="mb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#8b8fa3]">
-              Understanding
-            </h4>
-            <p
-              style={isExpanded ? undefined : { maxHeight: "4.8rem", overflow: "hidden" }}
-              className="text-sm leading-relaxed text-[#4a4e69]"
-            >
-              {isExpanded ? output.understanding : summarize(output.understanding, 1)}
-            </p>
-          </section>
+              <section className="rounded-xl border border-[#e8ecf1] bg-[#f7f8fa] px-3 py-2">
+                <h4 className="mb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#8b8fa3]">
+                  Understanding
+                </h4>
+                <p
+                  className="text-sm leading-relaxed text-[#4a4e69]"
+                  style={{ maxHeight: "4.8rem", overflow: "hidden" }}
+                >
+                  {summarize(output.understanding, 1)}
+                </p>
+              </section>
 
-          <section className="rounded-xl border border-[#e8ecf1] bg-[#f7f8fa] px-3 py-2">
-            <h4 className="mb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#8b8fa3]">
-              Reasoning
-            </h4>
-            <p
-              style={isExpanded ? undefined : { maxHeight: "4.8rem", overflow: "hidden" }}
-              className="text-sm leading-relaxed text-[#4a4e69]"
-            >
-              {isExpanded
-                ? output.internal_reasoning_summary
-                : summarize(output.internal_reasoning_summary, 1)}
-            </p>
-          </section>
+              <section className="rounded-xl border border-[#e8ecf1] bg-[#f7f8fa] px-3 py-2">
+                <h4 className="mb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#8b8fa3]">
+                  Reasoning
+                </h4>
+                <p
+                  className="text-sm leading-relaxed text-[#4a4e69]"
+                  style={{ maxHeight: "4.8rem", overflow: "hidden" }}
+                >
+                  {summarize(output.internal_reasoning_summary, 1)}
+                </p>
+              </section>
+            </>
+          )}
 
           <section className="rounded-xl border border-[#e8ecf1] bg-[#f7f8fa] px-3 py-2">
             <h4 className="mb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#8b8fa3]">
@@ -195,6 +205,7 @@ export default function AgentCard({
           </div>
 
           <textarea
+            ref={textareaRef}
             value={followUp}
             onChange={(event) => setFollowUp(event.target.value)}
             onKeyDown={(event) => {
@@ -204,8 +215,9 @@ export default function AgentCard({
               }
             }}
             placeholder={`Ask ${meta.name} a follow-up...`}
-            rows={3}
-            className="w-full resize-none rounded-xl border border-[#d4d9e0] bg-white px-3 py-2.5 text-sm text-[#1a1a2e] placeholder-[#8b8fa3] focus:border-[#1B6AC9]/40 focus:outline-none"
+            rows={1}
+            className="w-full resize-none rounded-xl border border-[#d4d9e0] bg-white px-3 py-2.5 text-sm text-[#1a1a2e] placeholder-[#8b8fa3] focus:border-[#1B6AC9]/40 focus:outline-none overflow-y-auto"
+            style={{ minHeight: "2.75rem" }}
           />
 
           <div className="mt-2 flex items-center justify-between gap-2">

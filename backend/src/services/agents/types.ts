@@ -19,7 +19,7 @@ export interface AgentPanel {
   missing_information: string[];
   internal_reasoning_summary: string;
   final_output: string;
-  confidence: number;
+  confidence?: number;
   model_used: string;
 }
 
@@ -27,7 +27,7 @@ export interface AgentRun<T> {
   key: AgentKey;
   role: string;
   mission: string;
-  confidence: number;
+  confidence?: number;
   modelUsed: string;
   summary: string;
   keyPoints: string[];
