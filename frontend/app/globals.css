@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+/* ─── Synod Design System — Off-White + Deep Blue ─────────────── */
+
+:root {
+  --bg-primary: #f0f2f5;
+  --bg-secondary: #e8ecf1;
+  --bg-card: #ffffff;
+  --accent-blue: #1B6AC9;
+  --accent-blue-hover: #1558a8;
+  --accent-blue-light: #e0edf9;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4e69;
+  --text-muted: #8b8fa3;
+  --border-color: #d4d9e0;
+  --sidebar-bg: #1a1a2e;
+  --sidebar-hover: #252542;
+  --sidebar-border: #2e2e4a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(27, 106, 201, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(27, 106, 201, 0.35);
+}
+
+/* ─── Selection ───────────────────────────────────────────────── */
+
+::selection {
+  background: rgba(27, 106, 201, 0.2);
+  color: #1a1a2e;
+}
+
+/* ─── Utility: line clamp ─────────────────────────────────────── */
+
+.line-clamp-6 {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
