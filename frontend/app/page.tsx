@@ -312,7 +312,7 @@ export default function Home() {
           >
             <h1 className="text-2xl font-bold tracking-tight">
               <span className="bg-gradient-to-r from-[#1B6AC9] to-[#1558a8] bg-clip-text text-transparent">
-                SYNOD
+                Synod
               </span>
             </h1>
           </motion.div>
