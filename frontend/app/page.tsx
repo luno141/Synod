@@ -294,7 +294,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen">
-      {/* ChatGPT-style sidebar */}
       <HistorySidebar
         threads={sidebarThreads}
         activeThreadId={activeTurnId}
@@ -302,7 +301,6 @@ export default function Home() {
         onNewChat={handleNewChat}
       />
 
-      {/* Main content area — shifts right for sidebar */}
       <main className="ml-[260px] flex-1 overflow-y-auto min-h-screen">
         <div className="flex min-h-full flex-col items-center justify-start px-4 py-10 md:px-6 md:py-14">
           <motion.div

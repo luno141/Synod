@@ -178,54 +178,48 @@ export default function AgentCard({
           ) : null}
         </div>
 
-        {isExpanded ? (
-          <form
-            onSubmit={async (event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              await handleAsk();
+        <form
+          onSubmit={async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            await handleAsk();
+          }}
+          onClick={(event) => event.stopPropagation()}
+          className="mt-4 rounded-xl border border-[#1B6AC9]/15 bg-[#1B6AC9]/5 p-3"
+        >
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <h4 className="text-[10px] font-medium uppercase tracking-[0.2em] text-[#1B6AC9]">
+              Ask this agent
+            </h4>
+            <span className="text-[10px] text-[#8b8fa3]">{meta.name}</span>
+          </div>
+
+          <textarea
+            value={followUp}
+            onChange={(event) => setFollowUp(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                void handleAsk();
+              }
             }}
-            onClick={(event) => event.stopPropagation()}
-            className="mt-4 rounded-xl border border-[#1B6AC9]/15 bg-[#1B6AC9]/5 p-3"
-          >
-            <div className="mb-2 flex items-center justify-between gap-3">
-              <h4 className="text-[10px] font-medium uppercase tracking-[0.2em] text-[#1B6AC9]">
-                Ask this agent
-              </h4>
-              <span className="text-[10px] text-[#8b8fa3]">{meta.name}</span>
-            </div>
+            placeholder={`Ask ${meta.name} a follow-up...`}
+            rows={3}
+            className="w-full resize-none rounded-xl border border-[#d4d9e0] bg-white px-3 py-2.5 text-sm text-[#1a1a2e] placeholder-[#8b8fa3] focus:border-[#1B6AC9]/40 focus:outline-none"
+          />
 
-            <textarea
-              value={followUp}
-              onChange={(event) => setFollowUp(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey) {
-                  event.preventDefault();
-                  void handleAsk();
-                }
-              }}
-              placeholder={`Ask ${meta.name} a follow-up...`}
-              rows={3}
-              className="w-full resize-none rounded-xl border border-[#d4d9e0] bg-white px-3 py-2.5 text-sm text-[#1a1a2e] placeholder-[#8b8fa3] focus:border-[#1B6AC9]/40 focus:outline-none"
-            />
-
-            <div className="mt-2 flex items-center justify-between gap-2">
-              <p className="text-[10px] text-[#8b8fa3]">Enter to send, Shift+Enter for a new line.</p>
-              <button
-                type="submit"
-                disabled={!followUp.trim() || !onAskAgent}
-                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#1B6AC9] to-[#1558a8] px-3 py-2 text-xs font-medium text-white transition-colors hover:from-[#2575d4] hover:to-[#1B6AC9] disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <Send className="h-3.5 w-3.5" />
-                Ask {meta.name}
-              </button>
-            </div>
-          </form>
-        ) : (
-          <p className="mt-4 text-[10px] uppercase tracking-[0.25em] text-[#8b8fa3]">
-            Tap to expand and ask a direct follow-up
-          </p>
-        )}
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <p className="text-[10px] text-[#8b8fa3]">Enter to send, Shift+Enter for a new line.</p>
+            <button
+              type="submit"
+              disabled={!followUp.trim() || !onAskAgent}
+              className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#1B6AC9] to-[#1558a8] px-3 py-2 text-xs font-medium text-white transition-colors hover:from-[#2575d4] hover:to-[#1B6AC9] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Send className="h-3.5 w-3.5" />
+              Ask {meta.name}
+            </button>
+          </div>
+        </form>
       </div>
     </motion.article>
   );

@@ -21,7 +21,7 @@ export default function FinalVerdict({ decision }: FinalVerdictProps) {
       transition={{ delay: 0.6, duration: 0.6 }}
       className="w-full max-w-4xl mx-auto"
     >
-      {/* Header Panel */}
+
       <div className="relative bg-white border border-[#d4d9e0] rounded-2xl p-8 mb-6 shadow-sm">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#1B6AC9]/40 to-transparent" />
 
@@ -40,7 +40,7 @@ export default function FinalVerdict({ decision }: FinalVerdictProps) {
         </div>
       </div>
 
-      {/* Verdict */}
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -55,9 +55,9 @@ export default function FinalVerdict({ decision }: FinalVerdictProps) {
         </p>
       </motion.div>
 
-      {/* Pros, Cons, Risks, Disagreements grid */}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Pros */}
+
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -80,7 +80,7 @@ export default function FinalVerdict({ decision }: FinalVerdictProps) {
           </ul>
         </motion.div>
 
-        {/* Cons */}
+
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -103,7 +103,7 @@ export default function FinalVerdict({ decision }: FinalVerdictProps) {
           </ul>
         </motion.div>
 
-        {/* Risks */}
+
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -126,7 +126,7 @@ export default function FinalVerdict({ decision }: FinalVerdictProps) {
           </ul>
         </motion.div>
 
-        {/* Disagreements */}
+
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
