@@ -19,12 +19,7 @@ interface DecisionInputProps {
   onTargetChange: (agent: AgentKey | "all") => void;
 }
 
-const EXAMPLE_PROMPTS = [
-  "Planner Agent: break down how I should validate an AI startup idea.",
-  "Market Agent: analyze competitors and positioning for an AI college app.",
-  "Engineer Agent: give me the tech stack and MVP roadmap for Synod.",
-  "Legal Agent: what compliance risks should I think about for storing user preferences?",
-];
+
 
 export default function DecisionInput({
   prompt,
@@ -195,25 +190,7 @@ export default function DecisionInput({
         </div>
       </form>
 
-      {!isLoading ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-6 flex flex-wrap justify-center gap-2"
-        >
-          {EXAMPLE_PROMPTS.map((example, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => onPromptChange(example)}
-              className="rounded-lg border border-[#d4d9e0] bg-white px-3 py-1.5 text-xs text-[#8b8fa3] transition-colors duration-200 hover:bg-[#1B6AC9]/5 hover:text-[#1B6AC9] hover:border-[#1B6AC9]/20"
-            >
-              {example}
-            </button>
-          ))}
-        </motion.div>
-      ) : null}
+
     </motion.div>
   );
 }
