@@ -14,7 +14,13 @@ export function createApp() {
 
   app.use(
     cors({
-      origin: env.CORS_ORIGIN,
+      origin: (origin, callback) => {
+        if (!origin || /^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("CORS blocked"));
+        }
+      },
       credentials: true,
     }),
   );
